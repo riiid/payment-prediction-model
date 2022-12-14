@@ -1,3 +1,4 @@
+from functools import lru_cache
 import numpy as np
 from pathlib import Path
 from fastapi import FastAPI, Response
@@ -8,6 +9,7 @@ import uvicorn
 from schemas import FEATURE, PAYMENT_PROBA, feature_names
 import os
 import pickle
+from pathlib import Path
 import logging
 
 # from .monitoring import instrumentator
@@ -16,12 +18,20 @@ LOGGER = logging.getLogger(__name__)
 uvicorn_access = logging.getLogger("uvicorn.access")
 uvicorn_access.disabled = True
 
+LOGGER.setLevel(logging.DEBUG)
+
 app = FastAPI(title="Prediction Model")
 
-model_path = os.path.join("artifacts/", "model.pkl")
-model = load(model_path)
 
-LOGGER.setLevel(logging.DEBUG)
+# model_path = os.path.join("artifacts/", "model.pkl")
+
+
+@lru_cache(maxsize=1)
+def get_model():
+    model_path = Path(__file__).parent.parent / "artifacts" / "model.joblib"
+    model = load(str(model_path))
+    LOGGER.info(model_path)
+    return model
 
 
 @app.get("/")
@@ -33,6 +43,7 @@ async def docs():
 async def predict(data: FEATURE, response: Response):
     data = data.dict()
     features = np.array([data[f] for f in feature_names]).reshape(1, -1)
+    model = get_model()
     prediction = round(model.predict_proba(features)[:, 1][0], 3)
     return PAYMENT_PROBA(proba=prediction)
 

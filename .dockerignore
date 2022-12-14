@@ -1,6 +1,6 @@
 .gitignore
-.train
-.datasets
+train
+datasets
 .dockerignore
 Dockerfile
 *.md

@@ -37,15 +37,14 @@ def train():
     y_test = dataset["y_test"]
 
     clf = lgb.LGBMClassifier()
-    clf = clf.fit(X_train, y_train)
+    clf.fit(X_train, y_train)
     # separate features from target
     y_pred = clf.predict(X_test)
     logger.info(classification_report(y_test, y_pred))
 
     logger.info("Saving artifacts...")
     Path("artifacts").mkdir(exist_ok=True)
-    # pickle.dump(clf, open("artifacts/model.pkl", "wb"))
-    dump(clf, "artifacts/model.pkl")
+    dump(clf, "artifacts/model.joblib")
 
 
 if __name__ == "__main__":
