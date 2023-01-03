@@ -1,6 +1,6 @@
 __pycache__/
 # DS_Store
 .DS_Store
-./datasets/airflow-v2-keyfile.json
+./airflow-v2-keyfile.json
 # VS code
 *.vscode
