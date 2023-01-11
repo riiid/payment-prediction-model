@@ -17,7 +17,7 @@ def prepare_dataset(test_size=0.2, random_seed=1):
     datasets_dir = "datasets/data.csv"
     datasets_path = cur_dir / datasets_dir
     dataset = pd.read_csv(datasets_path)
-    target_variable = "diagnosis"
+    target_variable = "paid_num"
     X = dataset.drop(columns=target_variable)
     y = dataset[target_variable]
     X_train, X_test, y_train, y_test = train_test_split(
@@ -38,6 +38,7 @@ def train():
 
     clf = lgb.LGBMClassifier()
     clf.fit(X_train, y_train)
+
     # separate features from target
     y_pred = clf.predict(X_test)
     logger.info(classification_report(y_test, y_pred))
